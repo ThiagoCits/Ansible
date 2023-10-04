@@ -1,0 +1,33 @@
+---
+- name: Create a user
+  hosts: ubuntu02
+  become: true
+  tasks:
+    - name: user teste present
+      ansible.builtin.user:
+        name: teste
+        password: password
+        shell: "/bin/bash"
+        system: false
+        create_home: true
+        home: "/home/teste"
+        generate_ssh_key: true
+    - name: add user in sudores group
+      ansible.builtin.shell:
+        cmd: usermod -aG sudo teste
+    - name: Ubuntu Like | Update System
+      ansible.builtin.apt: name="*" state=latest
+    - name: Instalação package
+      ansible.builtin.apt:
+          name: inetutils-traceroute
+          state: present
+    - name: Set authorized key taken from file
+      ansible.posix.authorized_key:
+          user: teste
+          state: present
+          key: "{{ lookup('file', '/home/furukawa/certificados/certificado.pub') }}"
+      register: debug
+    - name: debug
+      debug:
+        msg: "{{debug}}"
+...
