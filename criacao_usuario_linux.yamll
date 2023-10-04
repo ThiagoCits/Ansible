@@ -25,7 +25,7 @@
       ansible.posix.authorized_key:
           user: teste
           state: present
-          key: "{{ lookup('file', '/home/furukawa/certificados/certificado.pub') }}"
+          key: "{{ lookup('file', '/home/usuer/certificados/certificado.pub') }}"
       register: debug
     - name: debug
       debug:
