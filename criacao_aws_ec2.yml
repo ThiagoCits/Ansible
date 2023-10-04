@@ -1,0 +1,47 @@
+
+---
+- name: teste ec2 list users
+  hosts: localhost
+  #strategy: debug
+  tasks:
+    - name: Teste de playbook aws
+      amazon.aws.ec2_instance: #modulo usando pelo ansible para criar ou deletar instancias.
+        name: "teste_ansible_instace 03" #nome para a instacia a ser criada.
+        key_name: "teste_ansible" # nome do par de chaves a serem utilizadas para conexão a instacia.
+        image_id: ami-04cb4ca688797756f # imagem a ser utilizada na instancia.
+        vpc_subnet_id: subnet-0aa8345f3b9034caf # id da subnet utilizada na vpc
+        instance_type: t2.micro #tipo de instancia.
+        security_group: sg-02d0b6d6bbb768238 # ID do security_group, não pode ser o nome do grupo.
+        network:
+          assing_public_ip: true #para que a instancia tenha um ip publico dinamico.
+        volumes:
+          - device_name: /dev/sda1 #nome do disco que a instacia utilizará
+            ebs:
+              volume_size: 10 # tamanho do disco em gigas
+              delete_on_termination: true # para quando a instancia for encerrada, delete o disco.
+        state: running # para quando a instancia seja criada, esta esteja em execução.
+        ##state##
+        #Goal state for the instances.
+        #state=present: ensures instances exist, but does not guarantee any state (e.g. running). Newly-launched instances will be run by EC2.
+        #state=running: state=present + ensures the instances are running
+        #state=started: state=running + waits for EC2 status checks to report OK if wait=true
+        #state=stopped: ensures an existing instance is stopped.
+        #state=rebooted: convenience alias for state=stopped immediately followed by state=running
+        #state=restarted: convenience alias for state=stopped immediately followed by state=started
+        #state=terminated: ensures an existing instance is terminated.
+        #state=absent: alias for state=terminated
+        #Choices:
+        #"present" ← (default)
+        #"terminated"
+        #"running"
+        #"started"
+        #"stopped"
+        #"restarted"
+        #"rebooted"
+        #"absent"
+        #hibernation_options: true # por padrão vem false, a principip é para subir a instancia em execução.
+      register: output # registra tudo que está acima.
+    - name: debug
+      debug: #mudulo de debug para mostrar as informações das ações da tarefa acima.
+        msg: "{{output}}" #mostrar o resutado do register da tarefa acima.
+...
