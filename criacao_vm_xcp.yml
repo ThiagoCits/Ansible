@@ -1,0 +1,35 @@
+---
+- name: Tentativa de criação VM
+  hosts: localhost
+  vars_files: /home/user/variaveis/xenvars.yaml
+  tasks:
+    - name: Criando VM
+      community.general.xenserver_guest:
+        hostname: "{{ xenserver_hostname }}"
+        username: "{{ xenserver_username }}"
+        password: "{{ xenserver_password }}"
+        #validate_certs: false
+        folder: /root/testevm
+        name: VM_ANSIBLE_LIVE
+        state: poweredon
+        template: Template_Ubuntu
+        disks:
+        - size_gb: 30
+          #sr: Local Storage
+        hardware:
+          num_cpus: 2
+          num_cpu_cores_per_socket: 1
+          memory_mb: 512
+        #cdrom:
+          #type: iso
+          #iso_name: ubuntu-20.04.4-live-server-amd64.iso
+        networks:
+        - name: VLAN513
+          #mac: aa:bb:dd:aa:00:18
+        #wait_for_ip_address: true
+      delegate_to: localhost
+      register: deploy
+    - name: deploy
+      debug:
+        msg: "{{ deploy }}"
+...
